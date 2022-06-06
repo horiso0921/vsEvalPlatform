@@ -52,7 +52,10 @@ function setOneEvalSetElement(index) {
     var parDiv = document.getElementById("parent");
     parDiv.appendChild(evalField);
 
-    parDiv.scrollTo(0, evalField.top);
+    parDiv.scrollTo({
+        top: document.getElementById("Inst").scrollHeight,
+        behavior: 'smooth'
+    });
     
 }
 
@@ -247,11 +250,14 @@ function createMoveButtonParent(eval_metrics){
 function createEvalRadio() {
     var div = document.createElement("div");
     div.className = "column is-10 is-offset-1";
-    div.style = "height: 100px"
+    div.style = "height: 100px;"
 
+    var paraDiv = document.createElement("div");
     var para = document.createElement("Strong");
     para.innerText = "所定の質問を自然に行っているシステムはどちらですか？";
-    div.appendChild(para);
+    paraDiv.appendChild(para);
+    paraDiv.className = "column is-half is-offset-one-quarter"
+    div.appendChild(paraDiv);
     
     var div_columns = document.createElement("div");
     div_columns.className = "columns";
@@ -260,7 +266,6 @@ function createEvalRadio() {
     eval_metrics.forEach(element => {
 
         var label = document.createElement("label");
-        label.className = "radio column is-one-third"
         
         var input = document.createElement("input");
         input.type = "radio";
@@ -273,6 +278,7 @@ function createEvalRadio() {
         var labelText = document.createTextNode(element[1]);
         label.appendChild(labelText);
         
+        label.className = "button column is-one-third"
         div_columns.appendChild(label)
     });
 
@@ -336,7 +342,7 @@ function createChatRow(agent, text) {
 
     var figure = document.createElement("figure");
     figure.className = "media" + (agent === "User" ? "-right" : agent === "Model" ? "-left" : agent === "Announce" ? "-center" : "");
-    figure.style = "margin-bottom: 0;"
+    figure.style = "margin-bottom: 0;margin-top: 0";
 
     var span = document.createElement("span");
     span.className = "icon is-large";
@@ -345,7 +351,6 @@ function createChatRow(agent, text) {
     
     var media = document.createElement("div");
     media.className = "media-content" + (agent === "User" ? "-right" : agent === "Model" ? "-left" : agent === "Announce" ? "-center" : "");
-
     var content = document.createElement("div");
     content.className = "content";
 
