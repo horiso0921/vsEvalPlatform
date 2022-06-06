@@ -15,7 +15,7 @@ WEB_HTML = """<html>
     <body>
         <div class="columns" style="height: 100%">
             <div class="column is-10 is-offset-1">
-              <section id="main" class="hero is-info is-large has-background-white has-text-grey-dark" style="height: 100%">
+              <section id="main" class="hero is-info has-background-white has-text-grey-dark" style="height: 100%">
                 <div id="parent" class="hero-body" style="overflow: auto; height: calc(100% - 76px); padding-top: 1em;">
                   <article class="message is-info" id="Inst">
                     <div class="message-header">
