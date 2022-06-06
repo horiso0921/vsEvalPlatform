@@ -1,6 +1,7 @@
 // Userの名前とidからoutputファイル名作成
 var param = location.search;
 var id = decodeURI(param.split('=')[1])
+var uname_str = '';
 
 var parDiv = document.getElementById("parent");
 parDiv.scrollTo(0, parDiv.scrollHeight);
@@ -10,11 +11,12 @@ var evaluation = [];
 var index = 0;
 
 function start() {
-    var uname = document.getElementById("userName");
+    uname = document.getElementById("userName");
     if (uname.value === '') {
         return
     }
 
+    uname_str = uname.value
     var send_info = {"id": id};
     var name_field = document.getElementById("userNamefield");
     name_field.remove();
@@ -65,7 +67,6 @@ function moveNext() {
     
     // 状態を持ってくる
     var isDoneOneSet = saveOneEvalSetResult();
-    console.log(index);
 
     if (isDoneOneSet) {
         // 今あるEvalSetを削除
@@ -77,7 +78,7 @@ function moveNext() {
         
         var moveButton = [["前へ","movePre();"], ["次へ","moveNext();"]]
         if (index == dialogues.length - 1){
-            updateMoveButtons([moveButton[0],["", ""],["終わり", "end();"]]);
+            updateMoveButtons([moveButton[0],["終わり", "end();"]]);
         } else {
             updateMoveButtons(moveButton);
         }
@@ -91,7 +92,19 @@ function moveNext() {
 
 // 終了時に動くやつ
 function end() {
-    // 何らかの処理
+    var isDoneOneSet = saveOneEvalSetResult();
+
+    if (isDoneOneSet) {
+        csvData = exportCSV();
+        send_info = {"data": csvData, "id": id, "name": uname_str}
+        fetch('/end', {
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            method: 'POST',
+            body: JSON.stringify(send_info)
+        })
+    }
 }
 
 // 「前へ」ボタンが押された時に動くやつ
@@ -385,4 +398,23 @@ function createChatRow(agent, text) {
     }
 
     return article;
+}
+
+function exportCSV() {
+    var csvData = "";
+    for (var i = 0; i < evaluation.length; i++) {
+        csvData += "" + evaluation[i] + ","
+    }
+
+    const link = document.createElement("a");
+    document.body.appendChild(link);
+    link.style = "display:none";
+    const blob = new Blob([csvData], { type: "octet/stream" });
+    const url = window.URL.createObjectURL(blob);
+    link.href = url;
+    link.download = uname_str + "_" + id + ".csv";
+    link.click();
+    window.URL.revokeObjectURL(url);
+    link.parentNode.removeChild(link);
+    return csvData;
 }
